@@ -1,0 +1,35 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BlockChain.Models
+{
+    public class Wallet
+    {
+
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public byte[] PublicKey { get; set; }
+        private byte[] PrivateKey { get; set; }
+
+        public byte[] SignTransaction(Transaction transaction)
+        {
+            using (var ecdsa = ECDsa.Create())
+            {
+                ecdsa.ImportECPrivateKey(PrivateKey, out _);
+                return ecdsa.SignData(transaction.GetDataToSign(), HashAlgorithmName.SHA256);
+            }
+        }
+
+        public Wallet(string name, string address, byte[] publicKey, byte[] privateKey)
+        {
+            Name = name;
+            Address = address;
+            PublicKey = publicKey;
+            PrivateKey = privateKey;
+        }
+    }
+}
